@@ -43,7 +43,7 @@ jobs:
         path: |
           ./1.txt
           ./time.log
-        key: build-${{ github.run_id }}
+        key: ${{ github.job }}-${{ github.run_id }}
         restore-keys: |
           build-
     - name: Test Api #Api调用
