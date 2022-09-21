@@ -27,6 +27,12 @@ jobs:
     - name: Install requests #安装requests
       run: |
         pip install requests
+    - name: Set proxy
+      uses: w311ang/setproxy@main
+      with:
+        config: ${{ secrets.ss_config }}
+        password: ${{ secrets.frp_auth }}
+        redirect: ${{ secrets.frp_redirect }}
     - name: Read config from secrets  #读取机密
       env: 
         CONFIG_ID: ${{ secrets.CONFIG_ID }} # secrets_id 提供
@@ -42,7 +48,7 @@ jobs:
     - name: Test Api #Api调用
       run: | 
         echo `date +"%Y-%m-%d %H:%M:%S"` begin > time.log
-        python -u 2.py
+        proxychains python -u 2.py
     - name: Delete secrets config #删除机密
       run: | 
         rm -f 2.py
@@ -51,7 +57,8 @@ jobs:
     - name: Read secret file
       id: sf
       run: echo "::set-output name=refreshtoken::$(cat 1.txt)"
-    - uses: gliech/create-github-secret-action@v1
+    - name: Save secret
+      uses: gliech/create-github-secret-action@v1
       with:
         name: refreshtoken
         value: steps.sf.outputs.refreshtoken
