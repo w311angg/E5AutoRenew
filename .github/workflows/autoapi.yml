@@ -37,15 +37,8 @@ jobs:
         echo $CONFIG_KEY > configkey.txt
         sed -i '10 r configid.txt' 2.py
         sed -i '12 r configkey.txt' 2.py
-    - name: Cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ./1.txt
-          ./time.log
-        key: ${{ github.job }}-${{ github.run_id }}
-        restore-keys: |
-          ${{ github.job }}-
+    - name: Write secret file
+      run: echo '${{ secrets.refreshtoken }}' > 1.txt
     - name: Test Api #Api调用
       run: | 
         echo `date +"%Y-%m-%d %H:%M:%S"` begin > time.log
@@ -55,4 +48,12 @@ jobs:
         rm -f 2.py
         rm -f configid.txt
         rm -f configkey.txt    
+    - name: Read secret file
+      id: sf
+      run: echo "::set-output name=refreshtoken::$(cat 1.txt)"
+    - uses: gliech/create-github-secret-action@v1
+      with:
+        name: refreshtoken
+        value: steps.sf.outputs.refreshtoken
+        pa_token: ${{ secrets.PA_TOKEN }}
     - uses: gautamkrishnar/keepalive-workflow@master
