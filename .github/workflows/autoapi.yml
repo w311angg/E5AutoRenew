@@ -72,6 +72,6 @@ jobs:
       uses: gliech/create-github-secret-action@v1
       with:
         name: refreshtoken
-        value: steps.sf.outputs.refreshtoken
+        value: ${{ steps.sf.outputs.refreshtoken }}
         pa_token: ${{ secrets.PA_TOKEN }}
     - uses: gautamkrishnar/keepalive-workflow@master
