@@ -71,7 +71,10 @@ jobs:
         rm -f configkey.txt    
     - name: Read secret file
       id: sf
-      run: echo "::set-output name=refreshtoken::$(cat 1.txt)"
+      run: |
+        secret=$(cat 1.txt)
+        echo "::add-mask::$secret"
+        echo "::set-output name=refreshtoken::$secret"
     - name: Save secret
       uses: gliech/create-github-secret-action@v1
       with:
