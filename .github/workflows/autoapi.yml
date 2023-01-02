@@ -61,9 +61,12 @@ jobs:
       with:
         timeout_minutes: 10
         max_attempts: 5
+        retry_wait_seconds: 60
         on_retry_command: |
           sudo systemctl restart shadowsocks-libev-local@client
           sleep 5s
+          proxychains curl -I -s --connect-timeout 5 http://192.168.2.1
+          systemctl status --no-page shadowsocks-libev-local@client
         command: |
           echo `date +"%Y-%m-%d %H:%M:%S"` begin > time.log
           proxychains python -u 2.py
